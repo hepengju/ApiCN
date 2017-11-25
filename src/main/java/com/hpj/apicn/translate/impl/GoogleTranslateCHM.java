@@ -1,4 +1,4 @@
-package com.hpj.translate.impl;
+package com.hpj.apicn.translate.impl;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -15,7 +15,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-import com.hpj.translate.Translate;
+import com.hpj.apicn.translate.Translate;
 
 /**
  * 谷歌翻译: 参考项目 chmTranslate 的代码,用的可能是其他开发者的帐号(也可能是免费的,因为看到tk校验).<br><br>

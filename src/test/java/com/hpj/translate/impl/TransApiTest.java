@@ -3,7 +3,10 @@ package com.hpj.translate.impl;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.hpj.translate.Translate;
+import com.hpj.apicn.translate.Translate;
+import com.hpj.apicn.translate.impl.BaiduTranslate;
+import com.hpj.apicn.translate.impl.GoogleTranslate;
+import com.hpj.apicn.translate.impl.YoudaoTranslate;
 
 /**
  * 测试翻译接口API

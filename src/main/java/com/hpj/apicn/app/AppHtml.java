@@ -1,4 +1,4 @@
-package com.hpj.translate;
+package com.hpj.apicn.app;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +17,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.hpj.translate.impl.BaiduTranslate;
+import com.hpj.apicn.translate.Translate;
+import com.hpj.apicn.translate.impl.BaiduTranslate;
 
 /**
  * 应用入口类: 翻译html

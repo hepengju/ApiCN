@@ -1,4 +1,4 @@
-package com.hpj.translate;
+package com.hpj.apicn.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.UnaryOperator;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
@@ -18,34 +19,59 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hpj.apicn.app.AppConst;
+
 /**
- * 应用入口类: 翻译Java源文件,然后生成新的sources.jar,javadoc.jar
+ * Jar包处理工具
  * 
  * @author he_pe
  */
-public class AppJava {
+public class JarUtil {
 
-	private static final Logger logger = LoggerFactory.getLogger(AppJava.class);
+	private static final Logger logger = LoggerFactory.getLogger(JarUtil.class);
+	
+	/**
+	 * 对外提供的产生中文jar包的方法
+	 * 
+	 * @param enJarName 英文jar包的名称
+	 * @param translateFunction 翻译函数
+	 * @return 中文jar包的文件名称
+	 * @throws Exception
+	 */
+	public static String makeCnJar(String enJarName,UnaryOperator<String> translateFunction) throws Exception {
+		return writeJar(translateJar(enJarName, translateFunction), getOutName(enJarName));
+	}
 
-	/** 翻译的主函数入口  */
-	public static void main(String[] args) throws Exception {
-		
-		//源名称
-		String srcName = "D:\\TEMP\\commons-lang3-3.7-sources.jar";
-		
-		//写入jar包函数(参数1: 翻译后的jar,参数2: 输出文件名称) --> 其中输出名称默认为: *-cn.jar
-		writeJar(translateJar(srcName),getOutName(srcName));
+	/** 验证jar文件名称 */
+	private static void validName(String srcName) throws Exception {
+		if(StringUtils.isBlank(srcName)) throw new Exception("Filename is blank: " + srcName);
+		if (!new File(srcName).exists()) throw new Exception("File doesn't exist: " + srcName);
+		if (!AppConst.JAR.equalsIgnoreCase(FilenameUtils.getExtension(srcName)))
+			throw new Exception("File isn't jar: " + srcName);
+	}
+
+	/** 取得输出的jar文件名称 */
+	private static String getOutName(String srcName) throws Exception {
+		validName(srcName);
+		String extension = FilenameUtils.getExtension(srcName);
+		String baseName = FilenameUtils.getBaseName(srcName);
+		String fullPath = FilenameUtils.getFullPath(srcName);
+		String newName = fullPath + baseName + AppConst._CN + extension;
+		return newName;
 	}
 	
 	/**
-	 * 取得翻译后的jarEntry的Map.
+	 * 取得翻译后的jarEntry的Map.<br><br>
+	 * 
+	 * 说明: 考虑jar工具中不应该有翻译的功能,为了解耦考虑将翻译函数作为参数进行传入.
 	 * 
 	 * @param srcName 源jar包的文件名称
+	 * @param translateFunction 翻译函数
 	 * @return 翻译后的Map
 	 * @throws IOException
 	 */
-	private static Map<JarEntry, byte[]> translateJar(String srcName) throws Exception {
-		validSrcName(srcName);
+	private static Map<JarEntry, byte[]> translateJar(String srcName,UnaryOperator<String> translateFunction) throws Exception {
+		validName(srcName);
 		//注意: 考虑某些文件是图片等,不适合转换为字符串,因此Value值采用byte[],而不是String
 		Map<JarEntry,byte[]> newEntryMap = new HashMap<>();
 		
@@ -77,7 +103,7 @@ public class AppJava {
 					}
 					//Java文件处理 : 翻译字符串,生成新流
 					String srcstr = IOUtils.toString(is, AppConst.srcEncoding);
-					String newstr = translateJavaContext(srcstr); //翻译!!
+					String newstr = translateFunction.apply(srcstr); //翻译!!
 					newEntryMap.put(new JarEntry(entryName), newstr.getBytes(AppConst.newEncoding));
 					logger.debug("Translated file: {}", entryName);
 				}
@@ -87,16 +113,6 @@ public class AppJava {
 		return newEntryMap;
 	}
 
-	/**
-	 * 翻译Java文件内容.
-	 * 
-	 * @param srcstr: Java文件生成的字符串
-	 * @return 翻译其内部注释后的字符串
-	 */
-	private static String translateJavaContext(String srcstr) {
-		// TODO Auto-generated method stub
-		return srcstr + "//HPJ";
-	}
 
 	/** 
 	 * 统一写入新的jar文件.
@@ -107,7 +123,7 @@ public class AppJava {
 	 * </ul>
 	 * 
 	 */
-	private static void writeJar(Map<JarEntry, byte[]> newEntryMap,String outName) throws IOException, FileNotFoundException {
+	private static String writeJar(Map<JarEntry, byte[]> newEntryMap,String outName) throws IOException, FileNotFoundException {
 		try (JarOutputStream out = new JarOutputStream(new FileOutputStream(outName));) {
 			newEntryMap.forEach((entry, bytes) -> {
 				try {
@@ -117,23 +133,7 @@ public class AppJava {
 			});
 		}
 		logger.info("New jar: {}", outName);
+		return outName;
 	}
 
-	/** 取得输出的jar文件名称 */
-	private static String getOutName(String srcName) throws Exception {
-		validSrcName(srcName);
-		String extension = FilenameUtils.getExtension(srcName);
-		String baseName = FilenameUtils.getBaseName(srcName);
-		String fullPath = FilenameUtils.getFullPath(srcName);
-		String newName = fullPath + baseName + AppConst._CN + extension;
-		return newName;
-	}
-
-	/** 验证jar文件名称 */
-	private static void validSrcName(String srcName) throws Exception {
-		if(StringUtils.isBlank(srcName)) throw new Exception("Filename is blank: " + srcName);
-		if (!new File(srcName).exists()) throw new Exception("File doesn't exist: " + srcName);
-		if (!AppConst.JAR.equalsIgnoreCase(FilenameUtils.getExtension(srcName)))
-			throw new Exception("File isn't jar: " + srcName);
-	}
 }

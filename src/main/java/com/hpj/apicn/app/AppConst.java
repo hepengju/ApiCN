@@ -1,4 +1,4 @@
-package com.hpj.translate;
+package com.hpj.apicn.app;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +28,7 @@ public class AppConst {
 	
 	//------------ 解析源代码进行翻译的常量设置 [开始]------------ //
 	public static final String JAR = "jar";
-	public static final String _CN = "-cn";
+	public static final String _CN = "-cn.";
 	
 	public static final List<String> JAVADOC_TAGS = Arrays.asList("");
 	public static final List<String> NOTRANS_JAVADOC_TAGS = Arrays.asList("@author","");

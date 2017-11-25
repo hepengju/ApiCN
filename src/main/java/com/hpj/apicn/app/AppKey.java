@@ -1,4 +1,4 @@
-package com.hpj.translate;
+package com.hpj.apicn.app;
 
 /**
  * 翻译项目所需的服务商密钥.<br><br>

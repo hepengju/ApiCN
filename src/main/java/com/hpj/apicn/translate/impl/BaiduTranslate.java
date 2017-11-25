@@ -1,4 +1,4 @@
-package com.hpj.translate.impl;
+package com.hpj.apicn.translate.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,9 +10,9 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.alibaba.fastjson.JSON;
-import com.hpj.translate.AppKey;
-import com.hpj.translate.Translate;
-import com.hpj.translate.util.HttpUtil;
+import com.hpj.apicn.app.AppKey;
+import com.hpj.apicn.translate.Translate;
+import com.hpj.apicn.util.HttpUtil;
 
 /**
  * 百度翻译.<br><br>

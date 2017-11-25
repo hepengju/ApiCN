@@ -1,4 +1,4 @@
-package com.hpj.translate.util;
+package com.hpj.apicn.util;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

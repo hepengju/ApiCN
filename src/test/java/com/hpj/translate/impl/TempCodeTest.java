@@ -1,5 +1,16 @@
 package com.hpj.translate.impl;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarOutputStream;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+
 /**
  * 代码编写过程的临时测试区
  * 
@@ -7,54 +18,44 @@ package com.hpj.translate.impl;
  */
 public class TempCodeTest {
 
-//	@Test
-//	public void fun01() {
-//		String[] strs = {"1","2"};
-//		String join = StringUtils.join(strs, ",");
-//		System.out.println(join);
-////		String join2 = String.format("%s,%s", strs);
-////		System.out.println(join2);
-//		String join3 = Arrays.stream(strs).collect(Collectors.joining(","));
-//		System.out.println(join3);
-//	}
-//	//@Test
-//	public void jar() throws Exception {
-//		// 源名称 --> 新名称: *-cn.jar
-//		String srcName = "D:\\TEMP\\commons-lang3-3.7-sources.jar";
-//		String outName = getOutJarName(srcName);
-//
-//		try (JarFile srcJar = new JarFile(srcName);
-//				JarOutputStream out = new JarOutputStream(new FileOutputStream(outName));) {
-//
-//			Enumeration<JarEntry> entries = srcJar.entries();
-//			while (entries.hasMoreElements()) {
-//				JarEntry entry = entries.nextElement();
-//				if (!entry.isDirectory() && entry.getName().endsWith(".java")) {
-//					String srcstr = "";
-//					try (InputStream is = srcJar.getInputStream(entry);) {
-//						srcstr = IOUtils.toString(is, "UTF-8");
-//					}
-//					String newstr = srcstr + "// HPJ " + LocalDateTime.now();
-//					JarEntry newentry = new JarEntry(entry.getName());
-//					out.putNextEntry(newentry);
-//					out.write(newstr.getBytes("UTF-8"));
-//				}else {
-//					out.putNextEntry(entry);
-//				}
-//				out.closeEntry();
-//			}
-//
-//		}
-//	}
-//
-//	private String getOutJarName(String srcName) throws Exception {
-//		String extension = FilenameUtils.getExtension(srcName);
-//		String baseName = FilenameUtils.getBaseName(srcName);
-//		String fullPath = FilenameUtils.getFullPath(srcName);
-//		if("jar".equalsIgnoreCase(FilenameUtils.getExtension(extension))) throw new Exception("文件不是jar文件");
-//		String newName = fullPath + baseName + "-cn." + extension;
-//		return newName;
-//	}
+	//@Test
+	public void jar() throws Exception {
+		// 源名称 --> 新名称: *-cn.jar
+		String srcName = "D:\\TEMP\\commons-lang3-3.7-sources.jar";
+		String outName = getOutJarName(srcName);
+
+		try (JarFile srcJar = new JarFile(srcName);
+				JarOutputStream out = new JarOutputStream(new FileOutputStream(outName));) {
+
+			Enumeration<JarEntry> entries = srcJar.entries();
+			while (entries.hasMoreElements()) {
+				JarEntry entry = entries.nextElement();
+				if (!entry.isDirectory() && entry.getName().endsWith(".java")) {
+					String srcstr = "";
+					try (InputStream is = srcJar.getInputStream(entry);) {
+						srcstr = IOUtils.toString(is, "UTF-8");
+					}
+					String newstr = srcstr + "// HPJ " + LocalDateTime.now();
+					JarEntry newentry = new JarEntry(entry.getName());
+					out.putNextEntry(newentry);
+					out.write(newstr.getBytes("UTF-8"));
+				}else {
+					out.putNextEntry(entry);
+				}
+				out.closeEntry();
+			}
+
+		}
+	}
+
+	private String getOutJarName(String srcName) throws Exception {
+		String extension = FilenameUtils.getExtension(srcName);
+		String baseName = FilenameUtils.getBaseName(srcName);
+		String fullPath = FilenameUtils.getFullPath(srcName);
+		if("jar".equalsIgnoreCase(FilenameUtils.getExtension(extension))) throw new Exception("文件不是jar文件");
+		String newName = fullPath + baseName + "-cn." + extension;
+		return newName;
+	}
 //
 //	private void translateComment(Comment c) {
 //		String srcContent = c.getContent();
